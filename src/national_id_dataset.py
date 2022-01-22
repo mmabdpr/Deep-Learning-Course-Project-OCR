@@ -39,11 +39,11 @@ class NationalIdDataset(torch.utils.data.IterableDataset):
             n = self.batch_size
             
             fonts = [
-                ('data/fonts/bbadr.ttf', 48, 0),
-                ('data/fonts/bmitra.ttf', 48, 0),
-                ('data/fonts/bnazanin.ttf', 48, 0),
-                ('data/fonts/byekan.ttf', 38, 10),
-                ('data/fonts/btraffic.ttf', 42, 0),
+                ('fonts/bbadr.ttf', 48, 0),
+                ('fonts/bmitra.ttf', 48, 0),
+                ('fonts/bnazanin.ttf', 48, 0),
+                ('fonts/byekan.ttf', 38, 10),
+                ('fonts/btraffic.ttf', 42, 0),
             ]
 
             with_hiphen = random.random() > 0.5
@@ -73,8 +73,8 @@ class NationalIdDataset(torch.utils.data.IterableDataset):
                 batch_x.append(img)
                 batch_y.append(national_id_label(card_id))
 
-            batch_tensor_x = torch.tensor(batch_x, dtype=torch.float32) / 255. - 0.5
-            batch_tensor_y = torch.tensor(batch_y, dtype=torch.int32)
+            batch_tensor_x = torch.tensor(np.array(batch_x, dtype=np.float32), dtype=torch.float32) / 255. - 0.5
+            batch_tensor_y = torch.tensor(np.array(batch_y, dtype=np.int32), dtype=torch.int32)
             
             yield batch_tensor_x, batch_tensor_y
 
