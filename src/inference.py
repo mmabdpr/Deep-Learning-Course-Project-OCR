@@ -1,4 +1,4 @@
-from src.crnn import CRNN
+from src.crnn import CRNN48
 import torch
 from PIL import Image, ImageOps
 import numpy as np
@@ -11,7 +11,7 @@ label2char = {0: '', 1: "0", 2: "1", 3: "2", 4: "3", 5: "4",
 
 
 if __name__ == "__main__":
-    model = CRNN()
+    model = CRNN48()
     checkpoint = torch.load("checkpoint\\13001.torch")
     model.load_state_dict(checkpoint['model'])
     model.eval()

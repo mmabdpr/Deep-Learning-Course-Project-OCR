@@ -1,20 +1,21 @@
+from pathlib import Path
 import torch
 import numpy as np
 from src.national_id_dataset import NationalIdDataset
 from src.metrics import calculate_accuracy
 from src.decoder import ctc_decode
 from src.train import BATCH_SIZE, device
-from src.crnn import CRNN
+from src.crnn import CRNN48
 from tqdm import tqdm
 
 
-CHECKPOINT_PATH = "checkpoint\\13001.torch"
+CHECKPOINT_PATH = (Path("checkpoint") / "13001.torch").resolve().as_posix()
 ITERATIONS = 100
 
 
 if __name__ == "__main__":
     checkpoint = torch.load(CHECKPOINT_PATH)
-    model = CRNN()
+    model = CRNN48()
     model.load_state_dict(checkpoint['model'])
     dataset = NationalIdDataset(batch_size=BATCH_SIZE)
     datasetIterator = iter(dataset)

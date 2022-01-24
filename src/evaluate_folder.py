@@ -4,7 +4,7 @@ from src.national_id_dataset import national_id_label
 from src.metrics import calculate_accuracy
 from src.decoder import ctc_decode
 from src.train import BATCH_SIZE, device
-from src.crnn import CRNN
+from src.crnn import CRNN48
 from tqdm import tqdm
 from PIL import Image, ImageOps
 import os
@@ -39,7 +39,7 @@ def get_batch(batch_index):
 
 if __name__ == "__main__":
     checkpoint = torch.load(CHECKPOINT_PATH)
-    model = CRNN()
+    model = CRNN48()
     model.load_state_dict(checkpoint['model'])
     overallAccuarcy = 0
     model.eval()

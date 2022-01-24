@@ -4,33 +4,29 @@ import torch
 import random
 import numpy as np
 
-from src.generate_national_cards import get_national_card_crop, get_national_card_crop_from_template, get_random_national_id
+from src.generate_credit_cards import get_credit_card_crop, get_credit_card_crop_from_template, get_random_credit_id
 from src.utils import id_label
 
 
-
-class NationalIdDataset(torch.utils.data.IterableDataset):
+class CreditIdDataset(torch.utils.data.IterableDataset):
     def __init__(self, batch_size, output_height):
-        super(NationalIdDataset).__init__()
+        super(CreditIdDataset).__init__()
         self.batch_size = batch_size
         self.output_height = int(output_height)
-        self.output_width = int(output_height / 90. * 360)
-
+        self.output_width = int(output_height / 90. * 500)
+        
     def __iter__(self):
         while True:
             n = self.batch_size
 
             fonts = [
-                ('fonts/bbadr.ttf', 48, 0),
-                ('fonts/bmitra.ttf', 48, 0),
-                ('fonts/bnazanin.ttf', 48, 0),
-                ('fonts/byekan.ttf', 38, 10),
-                ('fonts/btraffic.ttf', 42, 0),
+                ('fonts/kredit back.ttf', 42, 10),
+                ('fonts/kredit.ttf', 42, 10),
+                ('fonts/calibri.ttf', 42, 10),
+                ('fonts/Inconsolata-Regular.ttf', 42, 10),
             ]
 
-            with_hiphen = random.random() > 0.5
-            card_ids = [get_random_national_id(
-                with_hiphen=with_hiphen) for _ in range(n)]
+            card_ids = [get_random_credit_id() for _ in range(n)]
             card_fonts = [fonts[i]
                           for i in np.random.choice(len(fonts), n, replace=True)]
 
@@ -40,10 +36,12 @@ class NationalIdDataset(torch.utils.data.IterableDataset):
                 card_id = card_ids[i]
                 if random.random() < 0.75:
                     templates = [
-                        Path('data/raw/national_card_crops/template_1.png').resolve().as_posix(),
-                        Path('data/raw/national_card_crops/template_2.png').resolve().as_posix(),
+                        Path('data/raw/credit_crops/template_1.png').resolve().as_posix(),
+                        Path('data/raw/credit_crops/template_2.png').resolve().as_posix(),
+                        Path('data/raw/credit_crops/template_3.png').resolve().as_posix(),
+                        Path('data/raw/credit_crops/template_4.png').resolve().as_posix(),
                     ]
-                    img = get_national_card_crop_from_template(
+                    img = get_credit_card_crop_from_template(
                         card_id,
                         np.random.choice(templates),
                         card_fonts[i][0],
@@ -51,7 +49,7 @@ class NationalIdDataset(torch.utils.data.IterableDataset):
                         card_fonts[i][2],
                         (self.output_width, self.output_height))
                 else:
-                    img = get_national_card_crop(
+                    img = get_credit_card_crop(
                         card_id,
                         card_fonts[i][0],
                         card_fonts[i][1],
@@ -72,7 +70,7 @@ class NationalIdDataset(torch.utils.data.IterableDataset):
 
 
 if __name__ == '__main__':
-    ds = NationalIdDataset(32, 48)
+    ds = CreditIdDataset(32, 48)
     it = iter(ds)
     X, Y = next(it)
     X2, Y2 = next(it)

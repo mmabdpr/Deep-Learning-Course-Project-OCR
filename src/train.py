@@ -1,22 +1,23 @@
-from ast import mod
 import torch
 from torch import nn
 from tqdm import tqdm
 from src.crnn import CRNN48
-from src.national_id_dataset import NationalIdDataset
+from src.dataset import IdDataset
 
 TOTAL_BATCHES = 3200
 BATCH_SIZE = 512
-CHECKPOINT_PATH = "drive/MyDrive/ocr/Checkpoints"
+# CHECKPOINT_PATH = "drive/MyDrive/ocr/Checkpoints"
+CHECKPOINT_PATH = "data/checkpoints"
+OUTPUT_HEIGHT = 48
 
 
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
-def train_batch(model, criterion, optimizer, batch, target, target_lengths):
-    preds = model.forward(batch)
+def train_batch(model: torch.nn.Module, criterion, optimizer: torch.optim.Optimizer, batch, target, target_lengths):
+    preds: torch.Tensor = model.forward(batch)
     preds_size = torch.IntTensor([preds.size(0)] * BATCH_SIZE)
-    cost = criterion(preds, target, preds_size, target_lengths)
+    cost: torch.Tensor = criterion(preds, target, preds_size, target_lengths)
     model.zero_grad()
     cost.backward()
     optimizer.step()
@@ -28,7 +29,7 @@ if __name__ == '__main__':
     optimizer = torch.optim.Adam(model.parameters())
     criterion = nn.CTCLoss(blank=0, zero_infinity=True, reduction='mean')
 
-    dataset = NationalIdDataset(batch_size=BATCH_SIZE)
+    dataset = IdDataset(batch_size=BATCH_SIZE, output_height=OUTPUT_HEIGHT)
     datasetIterator = iter(dataset)
 
     i = 0

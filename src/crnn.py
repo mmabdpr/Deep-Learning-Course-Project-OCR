@@ -32,7 +32,7 @@ class BidirectionalLSTM(nn.Module):
 
 class CRNN96(nn.Module):
     def __init__(self):
-        super(CRNN, self).__init__()
+        super(CRNN96, self).__init__()
         cnn = nn.Sequential()
 
         cnn.add_module(f'conv_{0}',
@@ -123,7 +123,7 @@ class CRNN96(nn.Module):
 
 class CRNN48(nn.Module):
     def __init__(self):
-        super(CRNN2, self).__init__()
+        super(CRNN48, self).__init__()
         cnn = nn.Sequential()
 
         cnn.add_module(f'conv_{0}',
