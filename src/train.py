@@ -53,3 +53,12 @@ if __name__ == '__main__':
         cost = train_batch(model, criterion, optimizer, x, y, y_lengths)
         history.append(cost.cpu().detach().numpy())
         i += 1
+
+    
+    torch.save({
+                "model": model.state_dict(),
+                "Iteration": i,
+                "Loss": cost,
+                "Optimizer": optimizer.state_dict(),
+                "History": history
+            }, f"{CHECKPOINT_PATH}/{i}.torch")
