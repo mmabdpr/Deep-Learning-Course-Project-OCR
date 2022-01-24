@@ -65,7 +65,7 @@ def beam_search_decode(emission_log_prob, blank=0, **kwargs):
 
 
 def ctc_decode(log_probs, label2char=None, blank=0, method='beam_search', beam_size=10):
-    emission_log_probs = np.transpose(log_probs.cpu().numpy(), (1, 0, 2))
+    emission_log_probs = np.transpose(log_probs.cpu().detach().numpy(), (1, 0, 2))
     # size of emission_log_probs: (batch, length, class)
 
     decoders = {

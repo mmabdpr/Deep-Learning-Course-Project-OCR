@@ -78,9 +78,10 @@ def en_to_fa(text):
 
 def get_random_national_id(with_hiphen=True):
     id = np.random.choice(list('۱۲۳۴۵۶۷۸۹۰'), 10, replace=True).tolist()
-    
+
     if with_hiphen:
-        hiphens = np.random.choice(list(range(1, 9)), 2, replace=False).tolist()
+        hiphens = np.random.choice(
+            list(range(1, 9)), 2, replace=False).tolist()
     else:
         hiphens = []
 
@@ -115,18 +116,18 @@ def add_sp_noise(img):
 
 
 def generate_random_national_cards(n=1):
-    res_dir = Path('data/interim/national_id')
+    res_dir = Path('data/interim/national_id_nohiphens')
 
     # (name, size, y offset)
     fonts = [
-        ('data/fonts/bbadr.ttf', 48, 0),
-        ('data/fonts/bmitra.ttf', 48, 0),
-        ('data/fonts/bnazanin.ttf', 48, 0),
-        ('data/fonts/byekan.ttf', 38, 10),
-        ('data/fonts/btraffic.ttf', 42, 0),
+        ('fonts/bbadr.ttf', 48, 0),
+        ('fonts/bmitra.ttf', 48, 0),
+        ('fonts/bnazanin.ttf', 48, 0),
+        ('fonts/byekan.ttf', 38, 10),
+        ('fonts/btraffic.ttf', 42, 0),
     ]
 
-    card_ids = [get_random_national_id() for _ in range(n)]
+    card_ids = [get_random_national_id(False) for _ in range(n)]
     card_fonts = [fonts[i]
                   for i in np.random.choice(len(fonts), n, replace=True)]
     kernel_sizes = np.random.randint(1, 6, n).tolist()
@@ -151,4 +152,4 @@ def generate_random_national_cards(n=1):
 
 
 if __name__ == '__main__':
-    generate_random_national_cards(1)
+    generate_random_national_cards(3200)
