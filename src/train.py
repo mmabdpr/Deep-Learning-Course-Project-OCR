@@ -2,11 +2,13 @@ from ast import mod
 import torch
 from torch import nn
 from tqdm import tqdm
-from src.crnn import CRNN
+from src.crnn import CRNN48
 from src.national_id_dataset import NationalIdDataset
 
-TOTAL_BATCHES = 50000
-BATCH_SIZE = 32
+TOTAL_BATCHES = 3200
+BATCH_SIZE = 512
+CHECKPOINT_PATH = "drive/MyDrive/ocr/Checkpoints"
+
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -22,7 +24,7 @@ def train_batch(model, criterion, optimizer, batch, target, target_lengths):
 
 
 if __name__ == '__main__':
-    model = CRNN().to(device)
+    model = CRNN48().to(device)
     optimizer = torch.optim.Adam(model.parameters())
     criterion = nn.CTCLoss(blank=0, zero_infinity=True, reduction='mean')
 
@@ -33,14 +35,14 @@ if __name__ == '__main__':
     history = []
     for _ in tqdm(range(TOTAL_BATCHES)):
         x, y = next(datasetIterator)
-        if i % 1000 == 1:
+        if i % 500 == 1:
             torch.save({
                 "model": model.state_dict(),
                 "Iteration": i,
                 "Loss": cost,
                 "Optimizer": optimizer.state_dict(),
                 "History": history
-            }, f"checkpoint/{i}.torch")
+            }, f"{CHECKPOINT_PATH}/{i}.torch")
 
         x = x.to(device)
         y = y.to(device)

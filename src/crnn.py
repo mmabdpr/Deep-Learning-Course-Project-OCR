@@ -30,7 +30,7 @@ class BidirectionalLSTM(nn.Module):
         return output
 
 
-class CRNN(nn.Module):
+class CRNN96(nn.Module):
     def __init__(self):
         super(CRNN, self).__init__()
         cnn = nn.Sequential()
@@ -110,6 +110,86 @@ class CRNN(nn.Module):
     def forward(self, input):
         conv = self.cnn(input)
         b, c, h, w = conv.size()
+        assert h == 1, "the height of conv must be 1"
+        conv = conv.squeeze(2)
+        conv = conv.permute(2, 0, 1)  # [w, b, c]
+
+        # rnn features
+        output = self.rnn(conv)
+
+        output = F.log_softmax(output, dim=2)
+
+        return output
+
+class CRNN48(nn.Module):
+    def __init__(self):
+        super(CRNN2, self).__init__()
+        cnn = nn.Sequential()
+
+        cnn.add_module(f'conv_{0}',
+                       nn.Conv2d(1, 32, kernel_size=(3, 3), stride=1))
+        
+        cnn.add_module(f'batch_norm_{0}',
+                       nn.BatchNorm2d(32))
+
+        cnn.add_module(f'relu_{0}',
+                       nn.ReLU(True))
+
+        cnn.add_module(f'pooling_{0}',
+                       nn.MaxPool2d(2, 2))
+
+        cnn.add_module(f'conv_{1}',
+                       nn.Conv2d(32, 64, kernel_size=(3, 3), stride=1))
+        
+        cnn.add_module(f'batch_norm_{1}',
+                       nn.BatchNorm2d(64))
+
+        cnn.add_module(f'relu_{1}',
+                       nn.ReLU(True))
+
+        cnn.add_module(f'pooling_{1}',
+                       nn.MaxPool2d(2, 2))
+
+        cnn.add_module(f'conv_{2}',
+                       nn.Conv2d(64, 128, kernel_size=(3, 3), stride=1))
+        
+        cnn.add_module(f'batch_norm_{2}',
+                       nn.BatchNorm2d(128))
+
+        cnn.add_module(f'relu_{2}',
+                       nn.ReLU(True))
+
+        cnn.add_module(f'pooling_{2}',
+                       nn.MaxPool2d(2, 2))
+
+        cnn.add_module(f'conv_{3}',
+                       nn.Conv2d(128, 256, kernel_size=(3, 3), stride=1))
+        
+        cnn.add_module(f'batch_norm_{3}',
+                       nn.BatchNorm2d(256))
+
+        cnn.add_module(f'relu_{3}',
+                       nn.ReLU(True))
+        
+        cnn.add_module(f'conv_{4}',
+                       nn.Conv2d(256, 512, kernel_size=(2, 2), stride=1))
+        
+        cnn.add_module(f'batch_norm_{4}',
+                       nn.BatchNorm2d(512))
+        
+        cnn.add_module(f'relu_{4}',
+                       nn.ReLU(True))
+
+        self.cnn = cnn
+        self.rnn = nn.Sequential(
+            BidirectionalLSTM(512, nHidden=512, nOut=256),
+            BidirectionalLSTM(nIn=256, nHidden=256, nOut=12)
+        )
+
+    def forward(self, input):
+        conv = self.cnn(input)
+        b, c, h, w = conv.size()
+        # print(h, w)
         assert h == 1, "the height of conv must be 1"
         conv = conv.squeeze(2)
         conv = conv.permute(2, 0, 1)  # [w, b, c]
