@@ -6,6 +6,7 @@ from scipy.special import logsumexp
 NINF = -1 * float('inf')
 DEFAULT_EMISSION_THRESHOLD = 0.01
 
+
 def _reconstruct(labels, blank=0):
     new_labels = []
     # merge same labels
@@ -25,9 +26,11 @@ def greedy_decode(emission_log_prob, blank=0, **kwargs):
     labels = _reconstruct(labels, blank=blank)
     return labels
 
+
 def beam_search_decode(emission_log_prob, blank=0, **kwargs):
     beam_size = kwargs['beam_size']
-    emission_threshold = kwargs.get('emission_threshold', np.log(DEFAULT_EMISSION_THRESHOLD))
+    emission_threshold = kwargs.get(
+        'emission_threshold', np.log(DEFAULT_EMISSION_THRESHOLD))
 
     length, class_count = emission_log_prob.shape
 
@@ -65,7 +68,8 @@ def beam_search_decode(emission_log_prob, blank=0, **kwargs):
 
 
 def ctc_decode(log_probs, label2char=None, blank=0, method='beam_search', beam_size=10):
-    emission_log_probs = np.transpose(log_probs.cpu().detach().numpy(), (1, 0, 2))
+    emission_log_probs = np.transpose(
+        log_probs.cpu().detach().numpy(), (1, 0, 2))
     # size of emission_log_probs: (batch, length, class)
 
     decoders = {

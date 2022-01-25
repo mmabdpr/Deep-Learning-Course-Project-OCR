@@ -11,6 +11,83 @@ import cv2
 from src.utils import add_sp_noise, fa_to_en
 
 
+def get_national_card_crop_fit_rot(card_text: str, font_path: str, font_size=48, font_y_offset=0, out_height=-1):
+
+    fg_light = int(255 * random.random() * 0.4)
+    bg_light = min(int(fg_light + 255 * (0.2 + random.random() * 0.4)), 255)
+
+    fg = (fg_light, fg_light, fg_light)
+    bg = (bg_light, bg_light, bg_light)
+    
+    size = (len(card_text) * 23, 40)
+    out_height = size[1] if out_height == -1 else out_height
+
+    rotation = random.random() * 20 - 10
+    
+    txt = Image.new('RGB', size, bg)
+
+    d = ImageDraw.Draw(txt)
+    font = ImageFont.truetype(font_path, font_size)
+    d.text((0, 4-font_y_offset), card_text, font=font, fill=fg, align='left')
+    img = txt.rotate(rotation, expand=1, fillcolor=bg)
+    out_width = out_height / img.height * img.width
+    img = img.resize((int(out_width), int(out_height)))
+    img = ImageOps.grayscale(img)
+    
+    img = np.array(img)
+    kernel_size = random.randint(1, 5)
+    img = cv2.erode(img,
+                    np.ones((kernel_size, kernel_size),
+                            np.uint8),
+                    iterations=1)
+    img = add_sp_noise(img)
+    img = Image.fromarray(img)
+    
+    if random.random() > 0.5:
+        img = ImageOps.invert(img)
+
+    return img
+
+
+def get_national_card_crop_fit(card_text: str, font_path: str, font_size=48, font_y_offset=0, out_height=-1):
+
+    fg_light = int(255 * random.random() * 0.4)
+    bg_light = min(int(fg_light + 255 * (0.2 + random.random() * 0.4)), 255)
+
+    fg = (fg_light, fg_light, fg_light)
+    bg = (bg_light, bg_light, bg_light)
+    
+    size = (len(card_text) * 23, 40)
+    out_height = size[1] if out_height == -1 else out_height
+
+    txt = Image.new('RGB', size, bg)
+
+    d = ImageDraw.Draw(txt)
+    font = ImageFont.truetype(font_path, font_size)
+    d.text((0, 4-font_y_offset), card_text, font=font, fill=fg, align='left')
+    img = txt
+    out_width = out_height / img.height * img.width
+    img = img.resize((int(out_width), int(out_height)))
+    img = ImageOps.grayscale(img)
+    
+    img = np.array(img)
+    kernel_size = random.randint(1, 5)
+    img = cv2.erode(img,
+                    np.ones((kernel_size, kernel_size),
+                            np.uint8),
+                    iterations=1)
+    img = add_sp_noise(img)
+    img = Image.fromarray(img)
+    
+    if random.random() > 0.5:
+        img = ImageOps.invert(img)
+
+    return img
+
+
+
+
+
 def get_national_card_crop(card_text: str, font_path: str, font_size=48, font_y_offset=0, out_size=-1):
 
     fg_light = int(255 * random.random() * 0.4)
@@ -147,28 +224,35 @@ def generate_random_national_cards(n=1):
 
     for i in range(n):
         card_id = card_ids[i]
-        if random.random() < 0.:
-            templates = [
-                Path('data/raw/national_card_crops/template_1.png').resolve().as_posix(),
-                Path('data/raw/national_card_crops/template_2.png').resolve().as_posix(),
-            ]
-            img = get_national_card_crop_from_template(
-                card_id,
-                np.random.choice(templates),
-                card_fonts[i][0],
-                card_fonts[i][1],
-                card_fonts[i][2],
-                (192, 48))
-        else:
-            img = get_national_card_crop(
-                card_id,
-                card_fonts[i][0],
-                card_fonts[i][1],
-                card_fonts[i][2],
-                (192, 48))
+        img = get_national_card_crop_fit_rot(
+            card_id,
+            card_fonts[i][0],
+            card_fonts[i][1],
+            card_fonts[i][2],
+            48
+        )
+        # if random.random() < 0.:
+        #     templates = [
+        #         Path('data/raw/national_card_crops/template_1.png').resolve().as_posix(),
+        #         Path('data/raw/national_card_crops/template_2.png').resolve().as_posix(),
+        #     ]
+        #     img = get_national_card_crop_from_template(
+        #         card_id,
+        #         np.random.choice(templates),
+        #         card_fonts[i][0],
+        #         card_fonts[i][1],
+        #         card_fonts[i][2],
+        #         (192, 48))
+        # else:
+        #     img = get_national_card_crop(
+        #         card_id,
+        #         card_fonts[i][0],
+        #         card_fonts[i][1],
+        #         card_fonts[i][2],
+        #         (192, 48))
         
         img.save(res_dir / f'{i}_{fa_to_en(card_id)}.jpg')
 
 
 if __name__ == '__main__':
-    generate_random_national_cards(100)
+    generate_random_national_cards(10)

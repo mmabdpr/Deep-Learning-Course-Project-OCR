@@ -23,6 +23,5 @@ class IdDataset(torch.utils.data.IterableDataset):
 if __name__ == "__main__":
     ds = IdDataset(32, 48)
     it = iter(ds)
-    X, Y = next(it)
-    X2, Y2 = next(it)
-    pass
+    while True:
+        X, Y = next(it)
