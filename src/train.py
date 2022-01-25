@@ -1,15 +1,16 @@
+from distutils.command import check
 import torch
 from torch import nn
 from tqdm import tqdm
 from src.crnn import CRNN48
 from src.dataset import IdDataset
 
-TOTAL_BATCHES = 3200
+TOTAL_BATCHES = 100000
 BATCH_SIZE = 512
 # CHECKPOINT_PATH = "drive/MyDrive/ocr/Checkpoints"
 CHECKPOINT_PATH = "data/checkpoints"
 OUTPUT_HEIGHT = 48
-
+LOAD_FROM_CHECKPOINT = None
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -28,12 +29,19 @@ if __name__ == '__main__':
     model = CRNN48().to(device)
     optimizer = torch.optim.Adam(model.parameters())
     criterion = nn.CTCLoss(blank=0, zero_infinity=True, reduction='mean')
+    i = 0
+    history = []
+    
+    if LOAD_FROM_CHECKPOINT:
+        checkpoint = torch.load(LOAD_FROM_CHECKPOINT)
+        model.load_state_dict(checkpoint['model'])
+        optimizer.load_state_dict(checkpoint['Optimizer'])
+        i = checkpoint['Iteration']
+        history = checkpoint['History']
 
     dataset = IdDataset(batch_size=BATCH_SIZE, output_height=OUTPUT_HEIGHT)
     datasetIterator = iter(dataset)
 
-    i = 0
-    history = []
     for _ in tqdm(range(TOTAL_BATCHES)):
         x, y = next(datasetIterator)
         if i % 500 == 1:
