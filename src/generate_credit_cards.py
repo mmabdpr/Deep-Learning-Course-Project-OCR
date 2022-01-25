@@ -17,7 +17,7 @@ def get_credit_card_crop(card_text: str, font_path: str, font_size=48, font_y_of
     fg_light = int(255 * random.random() * 0.4)
     bg_light = min(int(fg_light + 255 * (0.2 + random.random() * 0.4)), 255)
 
-    fg = (0, 0, 0)
+    fg = (fg_light, fg_light, fg_light)
     bg = (bg_light, bg_light, bg_light)
 
     size = (500, 90)
@@ -144,7 +144,7 @@ def generate_random_credit_cards(n=1):
 
     for i in range(n):
         card_id = card_ids[i]
-        if random.random() < .75:
+        if random.random() < .0:
             templates = [
                 Path('data/raw/credit_crops/template_1.png').resolve().as_posix(),
                 Path('data/raw/credit_crops/template_2.png').resolve().as_posix(),
