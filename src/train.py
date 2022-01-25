@@ -41,13 +41,13 @@ if __name__ == '__main__':
 
     dataset = IdDataset(batch_size=BATCH_SIZE, output_height=OUTPUT_HEIGHT)
     datasetIterator = iter(dataset)
-
-    for _ in tqdm(range(TOTAL_BATCHES)):
+    pbar = tqdm(range(i, TOTAL_BATCHES))
+    for iter in pbar:
         x, y = next(datasetIterator)
         if i % 500 == 1:
             torch.save({
                 "model": model.state_dict(),
-                "Iteration": i,
+                "Iteration": iter,
                 "Loss": cost,
                 "Optimizer": optimizer.state_dict(),
                 "History": history
@@ -61,7 +61,7 @@ if __name__ == '__main__':
 
         cost = train_batch(model, criterion, optimizer, x, y, y_lengths)
         history.append(cost.cpu().detach().numpy())
-        i += 1
+        pbar.set_description(f"loss: {history[-1]:.2f}")
 
     
     torch.save({
