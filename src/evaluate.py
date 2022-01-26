@@ -81,7 +81,7 @@ def run_evaluation(checkpoint: Path, labels: Path):
 def main():
     eval_labels = Path('data/raw/evaluate/labels.json')
     # eval_labels = Path('data/processed/evaluate/labels.json')
-    checkpoint = Path('data/checkpoints/31999.torch')
+    checkpoint = Path('data/checkpoints/40001.torch')
     run_evaluation(checkpoint, eval_labels)
 
 

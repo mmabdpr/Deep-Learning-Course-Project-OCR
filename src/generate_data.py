@@ -2,6 +2,7 @@ from pathlib import Path
 import torch
 from PIL import Image, ImageOps
 import pandas as pd
+import tqdm
 
 from src.utils import label2char
 from src.dataset import IdDataset
@@ -26,7 +27,7 @@ def generate_test_data():
     labels = []
     images = []
 
-    for i in range(2):
+    for i in tqdm.tqdm(range(1000)):
         x, y = next(ds)
 
         for img, label in zip(x, y):
